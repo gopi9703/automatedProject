@@ -1,0 +1,11 @@
+.nav_ui_link {
+  @apply block flex items-center flex-row items-center hover:bg-blue-300 hover:rounded-md bg-transparent hover:text-white px-3 py-2 transition;
+}
+
+.sidebar {
+  @apply flex flex-col px-5 py-3 w-60;
+}
+
+.active {
+  @apply block w-full bg-blue-400 hover:rounded text-white px-3 py-2 rounded-md;
+}
