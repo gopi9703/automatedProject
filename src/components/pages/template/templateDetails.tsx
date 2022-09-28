@@ -4,24 +4,29 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { FilterMatchMode } from "primereact/api";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import TemplateService from "../../services/template";
 import { ITemplate } from "../../types/TemplateTypes";
+import { useNavigate } from "react-router-dom";
 
 const TemplateDetails: React.FC = () => {
   const [templateDetails, setTemplateDetails] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [filters, setFilters] = useState<any>();
+  const [templateName, setTemplateName] = useState<string>("");
+  const [templateDesc, setTemplateDesc] = useState<string>("");
 
   let params = useParams();
+  let navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
     TemplateService.templeDetails(params.id)
       .then((response: any) => {
         setLoading(false);
-        console.log(response.data);
+        setTemplateName(response.data.name);
+        setTemplateDesc(response.data.description);
         setTemplateDetails(response.data.questions);
       })
       .catch((e: Error) => {
@@ -64,6 +69,9 @@ const TemplateDetails: React.FC = () => {
           label="Add New"
           icon="pi pi-plus"
           className="p-button-success  p-button-outlined mr-2"
+          onClick={() => {
+            navigate(`/template/add`, { state: params });
+          }}
         />
       </div>
     );
@@ -179,9 +187,33 @@ const TemplateDetails: React.FC = () => {
     );
   };
 
+  const renderBreadCrum = () => {
+    return (
+      <>
+        <div className="flex flex-row items-center">
+          <Link to="/template">
+            <i className="pi pi-home"></i>
+          </Link>
+          <i className="pi pi-angle-right mx-1"></i>
+          <p>
+            Template Name:
+            <span className="font-bold px-1">{templateName}</span>
+          </p>
+          <p className="px-3">
+            Template Description:
+            <span className="font-bold px-1">{templateDesc}</span>
+          </p>
+        </div>
+      </>
+    );
+  };
+
   return (
     <>
       <div className="flex flex-col w-full p-4">
+        <div className="p-4 bg-white border-gray-200 border rounded my-4">
+          {renderBreadCrum()}
+        </div>
         <DataTable
           className="shadow-md"
           scrollable

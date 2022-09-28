@@ -13,6 +13,7 @@ import Questions from "./components/pages/administration/Question";
 import PossibleResponse from "./components/pages/administration/Response";
 import Template from "./components/pages/template";
 import TemplateDetails from "./components/pages/template/templateDetails";
+import AddQuestion from "./components/pages/template/addQuestion";
 
 function AppRouting() {
   return (
@@ -21,9 +22,10 @@ function AppRouting() {
         <Routes>
           <Route path="/" element={<BasicLayout />}>
             <Route index element={<Dashboard />} />
-            {/* <Route path="template" element={<Template />} /> */}
-            <Route path="/template" element={<Template />} />
+            <Route path="template" element={<Template />} />
             <Route path="/template/:id" element={<TemplateDetails />} />
+            <Route path="/template/add" element={<AddQuestion />} />
+
             <Route path="/administration" element={<Administation />}>
               <Route index element={<Division />} />
               <Route path="external-role" element={<Role />} />

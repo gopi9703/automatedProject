@@ -7,6 +7,13 @@ const getAll = () => {
   );
 };
 
+const createTemplate = (body: ITemplate) => {
+  return api.post<Array<ITemplate>>(
+    `${process.env.REACT_APP_BASE_URL}/templates`,
+    body
+  );
+};
+
 const templeDetails = (id: any) => {
   return api.get<Array<ITemplate>>(
     `${process.env.REACT_APP_BASE_URL}/templates/${id}`
@@ -15,6 +22,7 @@ const templeDetails = (id: any) => {
 
 const TemplateService = {
   getAll,
+  createTemplate,
   templeDetails,
 };
 

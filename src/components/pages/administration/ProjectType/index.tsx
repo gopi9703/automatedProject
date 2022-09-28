@@ -14,7 +14,6 @@ const ProjectType: React.FC = () => {
   const [loader, setLoader] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState(null);
   const [projectList, setProjectList] = useState([]);
-  const [showTable, setShowTable] = useState<boolean>(false);
   const [projectTable, setProjectTable] = useState([]);
 
   useEffect(() => {

@@ -4,15 +4,18 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { FilterMatchMode } from "primereact/api";
+import { Dialog } from "primereact/dialog";
 import TemplateService from "../../services/template";
 import { ITemplate } from "../../types/TemplateTypes";
 import { useNavigate } from "react-router-dom";
+import AddTemplate from "./addTemplate";
 
 const Template: React.FC = () => {
   const [templates, setTemplates] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [filters, setFilters] = useState<any>();
+  const [userDialog, setUserDialog] = useState<boolean>(false);
 
   let navigate = useNavigate();
 
@@ -45,6 +48,13 @@ const Template: React.FC = () => {
     setGlobalFilterValue("");
   };
 
+  const addNewUser = () => {
+    setUserDialog(true);
+  };
+  const hideDialog = () => {
+    setUserDialog(false);
+  };
+
   const renderFilter = () => {
     return (
       <div className="flex flex-row justify-between">
@@ -58,6 +68,12 @@ const Template: React.FC = () => {
             />
           </span>
         </div>
+        <Button
+          onClick={addNewUser}
+          label="Add New"
+          icon="pi pi-plus"
+          className="p-button-success  p-button-outlined mr-2"
+        />
       </div>
     );
   };
@@ -108,6 +124,15 @@ const Template: React.FC = () => {
           <Column body={renderActions} header="Actions"></Column>
         </DataTable>
       </div>
+      <Dialog
+        visible={userDialog}
+        style={{ width: "450px" }}
+        header="Add Question"
+        modal
+        onHide={hideDialog}
+      >
+        <AddTemplate hideDialog={hideDialog} />
+      </Dialog>
     </>
   );
 };
