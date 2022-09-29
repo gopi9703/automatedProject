@@ -6,4 +6,12 @@ interface ITemplate {
   externalId: string;
 }
 
-export type { ITemplate };
+interface IAddQuestion {
+  questionId?: any;
+  displayOrder: number;
+  isResponseRequired: boolean;
+  isItemQuestion: boolean;
+  possibleResponses?: string[];
+}
+
+export type { ITemplate, IAddQuestion };

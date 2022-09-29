@@ -1,5 +1,5 @@
 import api from "../services/api";
-import { ITemplate } from "../types/TemplateTypes";
+import { IAddQuestion, ITemplate } from "../types/TemplateTypes";
 
 const getAll = () => {
   return api.get<Array<ITemplate>>(
@@ -20,10 +20,18 @@ const templeDetails = (id: any) => {
   );
 };
 
+const createQuestion = (id: any, body: IAddQuestion) => {
+  return api.post<Array<IAddQuestion>>(
+    `${process.env.REACT_APP_BASE_URL}/templates/${id}/questions`,
+    body
+  );
+};
+
 const TemplateService = {
   getAll,
   createTemplate,
   templeDetails,
+  createQuestion,
 };
 
 export default TemplateService;
