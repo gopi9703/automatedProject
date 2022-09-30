@@ -120,7 +120,6 @@ const ProjectType: React.FC = () => {
           filters={filters}
           header={renderFilter}
         >
-          <Column field="id" header="id"></Column>
           <Column field="importFileColumn.name" header="Name"></Column>
           <Column field="code" header="Code"></Column>
           <Column

@@ -151,7 +151,6 @@ const PossibleResponse: React.FC = () => {
         filters={filters}
         header={renderFilter}
       >
-        <Column field="id" header="id"></Column>
         <Column field="text" header="Text"></Column>
         <Column field="description" header="Description"></Column>
         <Column field="externalId" header="External Id"></Column>

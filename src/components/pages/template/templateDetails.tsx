@@ -93,10 +93,6 @@ const TemplateDetails: React.FC = () => {
     );
   };
 
-  const renderId = (rowData: ITemplate) => {
-    return <>{rowData.id}</>;
-  };
-
   const renderQuestionText = (rowData: any) => {
     return <>{rowData.question.text}</>;
   };
@@ -234,7 +230,6 @@ const TemplateDetails: React.FC = () => {
           filters={filters}
           header={renderFilter}
         >
-          <Column body={renderId} header="id"></Column>
           <Column body={renderQuestionText} header="Question Text"></Column>
           <Column body={renderQuestionDesc} header="Description"></Column>
           <Column body={renderQuestionType} header="Question Type"></Column>

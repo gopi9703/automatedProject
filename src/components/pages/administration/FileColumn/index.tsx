@@ -128,7 +128,6 @@ const FileColumn: React.FC = () => {
         filters={filters}
         header={renderFilter}
       >
-        <Column field="id" header="id"></Column>
         <Column field="name" header="Name"></Column>
         <Column field="description" header="Description"></Column>
         <Column body={renderActions} header="Actions"></Column>

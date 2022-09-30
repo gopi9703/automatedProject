@@ -79,7 +79,6 @@ const NotificationType: React.FC = () => {
         filters={filters}
         header={renderFilter}
       >
-        <Column field="id" header="id"></Column>
         <Column field="name" header="Name"></Column>
         <Column field="code" header="Code"></Column>
         <Column field="description" header="Description"></Column>
