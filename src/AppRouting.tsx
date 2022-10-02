@@ -13,7 +13,7 @@ import Questions from "./components/pages/administration/Question";
 import PossibleResponse from "./components/pages/administration/Response";
 import Template from "./components/pages/template";
 import TemplateDetails from "./components/pages/template/templateDetails";
-import AddQuestion from "./components/pages/template/addQuestion";
+import AddQuestion from "./components/pages/template/AddQuestion";
 
 function AppRouting() {
   return (

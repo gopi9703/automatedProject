@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import QuestionServices from "../../services/question";
+import QuestionServices from "../../../services/question";
 import { Checkbox } from "primereact/checkbox";
-import ResponseService from "../../services/response";
+import ResponseService from "../../../services/response";
 import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";
 import { Dropdown } from "primereact/dropdown";
-import TemplateService from "../../services/template";
-import Loader from "../../Utils/Loader";
-import { setToaster } from "../../Utils/toastStore";
+import TemplateService from "../../../services/template";
+import Loader from "../../../Utils/Loader";
+import { setToaster } from "../../../Utils/toastStore";
 import { useLocation } from "react-router-dom";
-import { IDropDown } from "../../types/commonTypes";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import { IDropDown } from "../../../types/commonTypes";
+import PossibleResponseTable from "./ResponseTable";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import { useForm } from "react-hook-form";
+import { InputText } from "primereact/inputtext";
+import { IAddQuestion } from "../../../types/TemplateTypes";
 
 const AddQuestion: React.FC = () => {
   const [formLoader, setFormLoader] = useState<boolean>(false);
@@ -29,6 +33,22 @@ const AddQuestion: React.FC = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  const validationSchema = Yup.object().shape({
+    questionId: Yup.string().required("Question is required"),
+    displayOrder: Yup.string().required("Display Order is required"),
+    isItemQuestion: Yup.boolean(),
+    isResponseRequired: Yup.boolean(),
+  });
+
+  const formOptions = {
+    resolver: yupResolver(validationSchema),
+    mode: "all",
+  };
+  const { register, handleSubmit, formState } = useForm<IAddQuestion>(
+    formOptions as object
+  );
+  const { errors } = formState;
 
   useEffect(() => {
     QuestionServices.getAll()
@@ -78,8 +98,7 @@ const AddQuestion: React.FC = () => {
     setSelectedResValue(e.value);
   };
 
-  const onSubmit = (e: any) => {
-    e?.preventDefault();
+  const onSubmit = (data: any) => {
     setFormLoader(true);
     TemplateService.createQuestion(
       location.state.id,
@@ -134,11 +153,12 @@ const AddQuestion: React.FC = () => {
     <>
       <div className="flex flex-col w-full p-4">
         <div className="bg-white py-6 px-8 shadow-md rounded">
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col ">
               <div className="flex flex-col">
                 <label className="py-2">Select Question</label>
                 <Dropdown
+                  {...register("questionId")}
                   className="w-60"
                   placeholder="Select a Question"
                   options={questionsList}
@@ -147,20 +167,26 @@ const AddQuestion: React.FC = () => {
                   optionLabel="name"
                   dataKey="code"
                 />
+                <div className="invalid-feedback">
+                  {JSON.stringify(errors.questionId?.message)}
+                </div>
               </div>
               <div className="flex flex-col my-4">
                 <label className="py-2">Display Order</label>
-                <InputNumber
+                <InputText
+                  {...register("displayOrder")}
                   className="w-56"
-                  mode="decimal"
-                  useGrouping={false}
                   value={displayOrder}
-                  onChange={(e) => setDisplayOrder(e.value)}
+                  onChange={(e) => setDisplayOrder(e.target.value)}
                 />
+                <div className="invalid-feedback">
+                  {errors.displayOrder?.message}
+                </div>
               </div>
               <div className="field-checkbox my-4">
                 <Checkbox
                   inputId="isResponse"
+                  {...register("isResponseRequired")}
                   checked={response}
                   onChange={(e) => setResponse(e.checked)}
                 />
@@ -171,6 +197,7 @@ const AddQuestion: React.FC = () => {
               <div className="field-checkbox my-4">
                 <Checkbox
                   inputId="isItem"
+                  {...register("isItemQuestion")}
                   checked={itemQuestion}
                   onChange={(e) => setItemQuestion(e.checked)}
                 />
@@ -218,34 +245,7 @@ const AddQuestion: React.FC = () => {
                     </div>
                   </div>
                   {responseData && responseData.length > 0 ? (
-                    <div className="pt-5">
-                      <DataTable
-                        className="shadow-md"
-                        scrollable
-                        scrollHeight="500px"
-                        value={responseData}
-                        stripedRows
-                        paginator
-                        filterDisplay="menu"
-                        responsiveLayout="scroll"
-                        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-                        rows={10}
-                        dataKey="id"
-                        rowsPerPageOptions={[10, 20, 50]}
-                        globalFilterFields={["name", "contactName", "address"]}
-                        emptyMessage="No Response found."
-                      >
-                        <Column
-                          field="possibleResponseId"
-                          header="Possible Resonse ID"
-                        ></Column>
-                        <Column
-                          field="displayOrder"
-                          header="Display Order"
-                        ></Column>
-                      </DataTable>
-                    </div>
+                    <PossibleResponseTable responseData={responseData} />
                   ) : null}
                 </div>
               ) : null}

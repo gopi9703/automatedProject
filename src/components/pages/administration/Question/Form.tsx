@@ -170,7 +170,7 @@ const QuestionForm = ({ ...props }) => {
                   placeholder="Select Question Type"
                   menuPosition={"fixed"}
                   styles={{
-                    menu: (provided) => ({ ...provided, zIndex: 1111111 }),
+                    menu: (provided) => ({ ...provided, zIndex: 9999 }),
                   }}
                 />
               )}
