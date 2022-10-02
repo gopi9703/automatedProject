@@ -8,6 +8,7 @@ import { Dialog } from "primereact/dialog";
 import QuestionServices from "../../../services/question";
 import { IQuestion } from "../../../types/AdministrationTypes";
 import QuestionForm from "./Form";
+import QuestionTypeServices from "../../../services/questionType";
 
 const Questions: React.FC = () => {
   const [question, setQuestion] = useState([]);
@@ -19,6 +20,7 @@ const Questions: React.FC = () => {
   const [dialogTitle, setDialogTitle] = useState<string>("");
   const [editObj, setEditObj] = useState({});
   const [formType, setFormType] = useState<number>(0);
+  const [questionTypeList, setQuestionTypeList] = useState<any[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -32,6 +34,23 @@ const Questions: React.FC = () => {
       });
     initFilters();
   }, [fetchData]);
+
+  useEffect(() => {
+    QuestionTypeServices.getAll()
+      .then((response: any) => {
+        let QuestionTypeList: any = [];
+        response.data.forEach((element: { name: string; id: string }) => {
+          QuestionTypeList.push({
+            label: element.name,
+            value: element.id,
+          });
+        });
+        setQuestionTypeList(QuestionTypeList);
+      })
+      .catch((e: Error) => {
+        console.log(e);
+      });
+  }, []);
 
   const triggerDataReFetch = () => setFetchData((t) => !t);
 
@@ -134,7 +153,7 @@ const Questions: React.FC = () => {
       <DataTable
         className="shadow-md"
         scrollable
-        scrollHeight="500px"
+        scrollHeight="400px"
         value={question}
         loading={loading}
         stripedRows
@@ -174,6 +193,7 @@ const Questions: React.FC = () => {
           hideDialog={hideDialog}
           editObj={editObj}
           formType={formType}
+          questionTypeList={questionTypeList}
         />
       </Dialog>
     </>

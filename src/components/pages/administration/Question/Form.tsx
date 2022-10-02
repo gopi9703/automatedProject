@@ -1,17 +1,42 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "primereact/button";
 import { setToaster } from "../../../Utils/toastStore";
 import Loader from "../../../Utils/Loader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IQuestion } from "../../../types/AdministrationTypes";
 import QuestionServices from "../../../services/question";
+import Select from "react-select";
 
 const QuestionForm = ({ ...props }) => {
-  const { editObj, hideDialog, triggerDataReFetch, formType } = props;
+  const {
+    editObj,
+    hideDialog,
+    triggerDataReFetch,
+    formType,
+    questionTypeList,
+  } = props;
 
   const [formLoader, setFormLoader] = useState<boolean>(false);
+  const [showQuestionType, setShowQuestionType] = useState<boolean>(false);
+  const [defaultQuestion, setDefaultQuestion] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (formType === 0) {
+      let emptyAr: any[] = [];
+      // eslint-disable-next-line array-callback-return
+      questionTypeList.map((item: { value: any }) => {
+        if (item.value === editObj.questionType.id) {
+          emptyAr.push(item);
+        }
+      });
+      setDefaultQuestion(emptyAr);
+      setShowQuestionType(true);
+    } else {
+      setShowQuestionType(true);
+    }
+  }, []);
 
   const validationSchema = Yup.object().shape({
     text: Yup.string()
@@ -20,19 +45,15 @@ const QuestionForm = ({ ...props }) => {
     description: Yup.string()
       .max(50, "maximum allowed 200 characters")
       .required("Description is required"),
-    externalId: Yup.string()
-      .max(20, "maximum allowed 20 characters")
-      .required("External ID is required"),
-    questionTypeId: Yup.string()
-      .max(5, "maximum allowed 5 characters")
-      .required("Question Type ID is required"),
+    externalId: Yup.string().required("External ID is required"),
+    questionTypeId: Yup.object().required("Description is required").nullable(),
   });
 
   const formOptions = {
     resolver: yupResolver(validationSchema),
     mode: "onSubmit",
   };
-  const { register, handleSubmit, formState } = useForm<IQuestion>(
+  const { register, handleSubmit, formState, control } = useForm<IQuestion>(
     formOptions as object
   );
   const { errors } = formState;
@@ -44,7 +65,7 @@ const QuestionForm = ({ ...props }) => {
         text: data.text,
         description: data.description,
         externalId: data.externalId,
-        questionTypeId: parseInt(data.questionTypeId),
+        questionTypeId: parseInt(data.questionTypeId.value),
       }).then(
         (response: any) => {
           setFormLoader(false);
@@ -71,7 +92,7 @@ const QuestionForm = ({ ...props }) => {
         text: data.text,
         description: data.description,
         externalId: data.externalId,
-        questionTypeId: parseInt(data.questionTypeId),
+        questionTypeId: parseInt(data.questionTypeId.value),
       }).then(
         (response: any) => {
           setFormLoader(false);
@@ -105,7 +126,7 @@ const QuestionForm = ({ ...props }) => {
             type="text"
             className="common-input"
             maxLength={50}
-            placeholder="Enter User name"
+            placeholder="Enter Question Text"
             {...register("text")}
             defaultValue={editObj?.text}
           />
@@ -128,27 +149,37 @@ const QuestionForm = ({ ...props }) => {
           <input
             type="text"
             className="common-input"
-            maxLength={50}
+            maxLength={20}
             placeholder="Enter external ID"
             {...register("externalId")}
             defaultValue={editObj?.externalId}
           />
           {/* <div className="invalid-feedback">{errors.externalId.message}</div> */}
         </div>
-        <div className="my-4 flex flex-col">
-          <label className="mb-2">question Type Id</label>
-          <input
-            type="text"
-            className="common-input"
-            maxLength={5}
-            placeholder="Enter Question Type ID"
-            {...register("questionTypeId")}
-            defaultValue={editObj?.questionType?.id}
-          />
-          <div className="invalid-feedback">
-            {errors.questionTypeId?.message}
+        {showQuestionType ? (
+          <div className="my-4 flex flex-col">
+            <label className="mb-2">question Type Id</label>
+            <Controller
+              name="questionTypeId"
+              control={control}
+              defaultValue={defaultQuestion[0]}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={questionTypeList}
+                  placeholder="Select Question Type"
+                  menuPosition={"fixed"}
+                  styles={{
+                    menu: (provided) => ({ ...provided, zIndex: 1111111 }),
+                  }}
+                />
+              )}
+            />
+            <div className="invalid-feedback">
+              {JSON.stringify(errors.questionTypeId?.message)}
+            </div>
           </div>
-        </div>
+        ) : null}
         <div className="flex flex-row-reverse mt-6">
           <Button
             type="submit"

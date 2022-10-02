@@ -37,9 +37,9 @@ interface IQuestion {
   id?: number | null;
   text?: string;
   description?: string;
-  externalId: any;
+  externalId?: string;
   isActive?: boolean;
-  questionTypeId?: number;
+  questionTypeId?: any;
   questionType?: {
     description: string;
     id: number;

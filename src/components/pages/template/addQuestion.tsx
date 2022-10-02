@@ -126,6 +126,10 @@ const AddQuestion: React.FC = () => {
     setResonseData([...responseData, item]);
   };
 
+  const goBack = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       <div className="flex flex-col w-full p-4">
@@ -257,6 +261,7 @@ const AddQuestion: React.FC = () => {
                 <div className="mx-3"></div>
                 <Button
                   label="Cancel"
+                  onClick={goBack}
                   type="button"
                   className="p-button-sm p-button-outlined p-button-danger"
                   icon="pi pi-times"
