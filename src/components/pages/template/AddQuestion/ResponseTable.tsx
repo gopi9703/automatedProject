@@ -10,7 +10,7 @@ const PossibleResponseTable = ({ ...props }) => {
         <DataTable
           className="shadow-md"
           scrollable
-          scrollHeight="500px"
+          scrollHeight="400px"
           value={responseData}
           stripedRows
           paginator

@@ -6,7 +6,7 @@ const BasicLayout = () => {
   return (
     <>
       <Header />
-      <div className="content-wrapper-view h-full">
+      <div className="content-wrapper-view">
         <Outlet />
       </div>
       <Footer />

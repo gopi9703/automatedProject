@@ -62,7 +62,7 @@ const FileType: React.FC = () => {
       <DataTable
         className="shadow-md"
         scrollable
-        scrollHeight="500px"
+        scrollHeight="400px"
         value={fileType}
         loading={loading}
         stripedRows

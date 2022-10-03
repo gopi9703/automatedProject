@@ -104,7 +104,7 @@ const ProjectType: React.FC = () => {
         <DataTable
           className="shadow-md"
           scrollable
-          scrollHeight="500px"
+          scrollHeight="400px"
           value={projectTable}
           loading={loading}
           stripedRows

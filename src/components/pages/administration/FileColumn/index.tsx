@@ -111,7 +111,7 @@ const FileColumn: React.FC = () => {
       <DataTable
         className="shadow-md"
         scrollable
-        scrollHeight="500px"
+        scrollHeight="400px"
         value={columns}
         loading={loading}
         stripedRows

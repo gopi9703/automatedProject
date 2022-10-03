@@ -100,7 +100,7 @@ const Template: React.FC = () => {
         <DataTable
           className="shadow-md"
           scrollable
-          scrollHeight="500px"
+          scrollHeight="400px"
           value={templates}
           loading={loading}
           stripedRows

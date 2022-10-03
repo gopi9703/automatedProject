@@ -111,7 +111,7 @@ const Division: React.FC = () => {
       <DataTable
         className="shadow-md"
         scrollable
-        scrollHeight="500px"
+        scrollHeight="400px"
         value={divisions}
         loading={loading}
         stripedRows

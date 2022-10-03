@@ -113,7 +113,7 @@ const Role: React.FC = () => {
       <DataTable
         className="shadow-md"
         scrollable
-        scrollHeight="500px"
+        scrollHeight="400px"
         value={roles}
         loading={loading}
         stripedRows
