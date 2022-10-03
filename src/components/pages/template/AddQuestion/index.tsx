@@ -142,7 +142,23 @@ const AddQuestion: React.FC = () => {
       possibleResponseId: selectedResValue?.code,
       displayOrder: responseOrder,
     };
-    setResonseData([...responseData, item]);
+    if (selectedResValue?.code === undefined) {
+      setToaster({
+        severity: "error",
+        summary: "Error Message",
+        detail: "Please select possible response",
+      });
+    } else if (responseOrder === undefined) {
+      setToaster({
+        severity: "error",
+        summary: "Error Message",
+        detail: "Please enter display order",
+      });
+    } else {
+      setResonseData([...responseData, item]);
+      setResponseOrder("");
+      setSelectedResValue({});
+    }
   };
 
   const goBack = () => {

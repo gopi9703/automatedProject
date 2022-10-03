@@ -51,7 +51,7 @@ body {
 
 .invalid-feedback {
   width: 100%;
-  @apply text-red-600 block text-xs;
+  @apply text-red-600 block text-xs my-1;
 }
 
 .common-input {
