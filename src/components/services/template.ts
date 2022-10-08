@@ -27,11 +27,18 @@ const createQuestion = (id: any, body: IAddQuestion) => {
   );
 };
 
+const deleteTemplateQuestion = (id: any, templateId: any) => {
+  return api.delete<Array<IAddQuestion>>(
+    `${process.env.REACT_APP_BASE_URL}/templates/${templateId}/questions?id=${id}`
+  );
+};
+
 const TemplateService = {
   getAll,
   createTemplate,
   templeDetails,
   createQuestion,
+  deleteTemplateQuestion,
 };
 
 export default TemplateService;

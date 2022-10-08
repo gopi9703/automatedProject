@@ -1,0 +1,8 @@
+.custom_small_icons {
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+  padding: 0 !important;
+  margin-top: 0.2rem !important;
+  margin-bottom: 0.2rem !important;
+  box-sizing: content-box;
+}

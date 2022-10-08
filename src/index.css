@@ -41,6 +41,10 @@ body {
   height: 2.2rem !important;
 }
 
+/* .p-button.p-button-sm .p-button-icon {
+  font-size: 12px !important;
+} */
+
 .loader-view {
   background: rgba(0, 0, 0, 0.3);
   z-index: 999;

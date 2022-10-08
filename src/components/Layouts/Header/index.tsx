@@ -10,8 +10,10 @@ const Header = () => {
           <li className="mx-1">
             <NavLink
               to="/"
-              className={
-                "hover:bg-blue-400 hover:rounded bg-transparent hover:text-white px-2 py-2"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-blue-400 rounded text-white px-2 py-2"
+                  : "hover:bg-blue-400 hover:rounded bg-transparent hover:text-white px-2 py-2"
               }
               end
             >
@@ -21,8 +23,10 @@ const Header = () => {
           <li className="mx-1">
             <NavLink
               to="/"
-              className={
-                "hover:bg-blue-400 hover:rounded bg-transparent hover:text-white px-2 py-2"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-blue-400 rounded text-white px-2 py-2"
+                  : "hover:bg-blue-400 hover:rounded bg-transparent hover:text-white px-2 py-2"
               }
               end
             >
@@ -32,8 +36,10 @@ const Header = () => {
           <li className="mx-1">
             <NavLink
               to="/template"
-              className={
-                "hover:bg-blue-400 hover:rounded bg-transparent hover:text-white px-2 py-2"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-blue-400 rounded text-white px-2 py-2"
+                  : "hover:bg-blue-400 hover:rounded bg-transparent hover:text-white px-2 py-2"
               }
               end
             >
@@ -43,8 +49,10 @@ const Header = () => {
           <li className="mx-1">
             <NavLink
               to="/administration"
-              className={
-                "hover:bg-blue-400 hover:rounded bg-transparent hover:text-white px-2 py-2"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-blue-400 rounded text-white px-2 py-2"
+                  : "hover:bg-blue-400 hover:rounded bg-transparent hover:text-white px-2 py-2"
               }
               end
             >

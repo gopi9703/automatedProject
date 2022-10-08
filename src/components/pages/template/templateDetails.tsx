@@ -6,8 +6,13 @@ import { InputText } from "primereact/inputtext";
 import { FilterMatchMode } from "primereact/api";
 import { Link, useParams } from "react-router-dom";
 import TemplateService from "../../services/template";
-import { ITemplate } from "../../types/TemplateTypes";
+import { IAddQuestion } from "../../types/TemplateTypes";
 import { useNavigate } from "react-router-dom";
+import { setToaster } from "../../Utils/toastStore";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import TemplateReponseModal from "./templateResponse";
+import styles from "./template.module.css";
+import { Dialog } from "primereact/dialog";
 
 const TemplateDetails: React.FC = () => {
   const [templateDetails, setTemplateDetails] = useState<string[]>([]);
@@ -16,9 +21,13 @@ const TemplateDetails: React.FC = () => {
   const [filters, setFilters] = useState<any>();
   const [templateName, setTemplateName] = useState<string>("");
   const [templateDesc, setTemplateDesc] = useState<string>("");
+  const [fetchData, setFetchData] = useState<boolean>(true);
+  const [userDialog, setUserDialog] = useState<boolean>(false);
+  const [dialogTitle, setDialogTitle] = useState<string>("");
 
   let params = useParams();
   let navigate = useNavigate();
+  const triggerDataReFetch = () => setFetchData((t) => !t);
 
   useEffect(() => {
     setLoading(true);
@@ -34,7 +43,7 @@ const TemplateDetails: React.FC = () => {
         console.log(e);
       });
     initFilters();
-  }, [params.id]);
+  }, [params.id, fetchData]);
 
   const onGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -77,15 +86,50 @@ const TemplateDetails: React.FC = () => {
     );
   };
 
-  const renderActions = (rowData: ITemplate) => {
+  const deleteQuestionDialog = (row: IAddQuestion) => {
+    confirmDialog({
+      message: "Are you sure you want to proceed?",
+      header: "Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        deleteQuestion(row);
+      },
+    });
+  };
+
+  const deleteQuestion = (row: IAddQuestion) => {
+    setLoading(true);
+    TemplateService.deleteTemplateQuestion(row?.id, params?.id).then(
+      (response: any) => {
+        setLoading(false);
+        triggerDataReFetch();
+        setToaster({
+          severity: "info",
+          summary: "Niruthi Staff",
+          detail: `${row?.question?.questionType?.name} deleted successfully!`,
+        });
+      },
+      (e: Error) => {
+        setLoading(false);
+        setToaster({
+          severity: "error",
+          summary: "Error Message",
+          detail: "Some thing went wrong, please try again",
+        });
+      }
+    );
+  };
+
+  const renderActions = (rowData: IAddQuestion) => {
     return (
       <>
         <div className="d-flex align-items-center">
           <Button
-            icon="pi pi-ban"
+            icon="pi pi-trash"
             className="p-button-rounded p-button-danger p-button-outlined mx-3"
             onClick={() => {
               console.log(rowData);
+              deleteQuestionDialog(rowData);
             }}
           />
         </div>
@@ -156,28 +200,70 @@ const TemplateDetails: React.FC = () => {
   const renderResponses = (rowData: any) => {
     return (
       <>
-        <div className="flex flex-col items-center">
-          {rowData.possibleResponses && rowData.possibleResponses.length > 0
-            ? rowData.possibleResponses.map((item: any, i: any) => (
-                <div key={i}>
-                  <>
-                    {item.possibleResponse.description === "Yes" ? (
-                      <Button
-                        label={`${item.displayOrder} - ${item.possibleResponse.description}`}
-                        className="p-button-info p-button-outlined my-1"
-                        style={{ padding: "5px 15px", margin: "2px 0" }}
-                      />
-                    ) : (
-                      <Button
-                        label={`${item.displayOrder} - ${item.possibleResponse.description}`}
-                        className="p-button-danger p-button-outlined my-1 block"
-                        style={{ padding: "5px 15px", margin: "2px 0" }}
-                      />
-                    )}
-                  </>
-                </div>
-              ))
-            : null}
+        <div className="flex flex-row items-center w-full justify-between">
+          <div className="flex flex-col items-center">
+            {rowData.possibleResponses && rowData.possibleResponses.length > 0
+              ? rowData.possibleResponses.map((item: any, i: any) => (
+                  <div key={i}>
+                    <>
+                      {item.possibleResponse.description === "Yes" ? (
+                        <Button
+                          label={`${item.displayOrder} - ${item.possibleResponse.description}`}
+                          className="p-button-info p-button-outlined my-1"
+                          style={{ padding: "5px 15px", margin: "2px 0" }}
+                        />
+                      ) : (
+                        <Button
+                          label={`${item.displayOrder} - ${item.possibleResponse.description}`}
+                          className="p-button-danger p-button-outlined my-1 block"
+                          style={{ padding: "5px 15px", margin: "2px 0" }}
+                        />
+                      )}
+                    </>
+                  </div>
+                ))
+              : null}
+          </div>
+          <div className="flex flex-col responses_view">
+            {rowData.possibleResponses &&
+            rowData.possibleResponses.length > 0 ? (
+              <>
+                <Button
+                  icon="pi pi-plus"
+                  className={`p-button-sm  p-button-success p-button-text ${styles.custom_small_icons}`}
+                  onClick={() => {
+                    console.log(rowData);
+                    showResponseModal();
+                  }}
+                />
+                <Button
+                  icon="pi pi-user-edit"
+                  className={`p-button-sm p-button-secondary p-button-text mx-3 ${styles.custom_small_icons}`}
+                  onClick={() => {
+                    console.log(rowData);
+                  }}
+                />
+                <Button
+                  icon="pi pi-trash"
+                  className={`p-button-sm p-button-danger p-button-text mx-3 ${styles.custom_small_icons}`}
+                  onClick={() => {
+                    console.log(rowData);
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <Button
+                  icon="pi pi-plus"
+                  className={`p-button-sm  p-button-success p-button-text ${styles.custom_small_icons}`}
+                  onClick={() => {
+                    console.log(rowData);
+                    showResponseModal();
+                  }}
+                />
+              </>
+            )}
+          </div>
         </div>
       </>
     );
@@ -202,6 +288,15 @@ const TemplateDetails: React.FC = () => {
         </div>
       </>
     );
+  };
+
+  const showResponseModal = () => {
+    setUserDialog(true);
+    setDialogTitle("Add Possible Response");
+  };
+
+  const hideDialog = () => {
+    setUserDialog(false);
   };
 
   return (
@@ -240,6 +335,16 @@ const TemplateDetails: React.FC = () => {
           <Column body={renderActions} header="Actions"></Column>
         </DataTable>
       </div>
+      <ConfirmDialog />
+      <Dialog
+        visible={userDialog}
+        style={{ width: "450px" }}
+        header={dialogTitle}
+        modal
+        onHide={hideDialog}
+      >
+        <TemplateReponseModal />
+      </Dialog>
     </>
   );
 };
