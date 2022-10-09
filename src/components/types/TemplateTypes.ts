@@ -20,4 +20,9 @@ interface IAddQuestion {
   };
 }
 
-export type { ITemplate, IAddQuestion };
+interface IPossibleResponseModal {
+  possibleResponseId: number | null;
+  displayOrder: number | null;
+}
+
+export type { ITemplate, IAddQuestion, IPossibleResponseModal };

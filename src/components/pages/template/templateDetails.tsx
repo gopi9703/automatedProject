@@ -24,6 +24,7 @@ const TemplateDetails: React.FC = () => {
   const [fetchData, setFetchData] = useState<boolean>(true);
   const [userDialog, setUserDialog] = useState<boolean>(false);
   const [dialogTitle, setDialogTitle] = useState<string>("");
+  const [editObj, setEditObj] = useState({});
 
   let params = useParams();
   let navigate = useNavigate();
@@ -233,7 +234,7 @@ const TemplateDetails: React.FC = () => {
                   className={`p-button-sm  p-button-success p-button-text ${styles.custom_small_icons}`}
                   onClick={() => {
                     console.log(rowData);
-                    showResponseModal();
+                    showResponseModal(rowData);
                   }}
                 />
                 <Button
@@ -258,7 +259,7 @@ const TemplateDetails: React.FC = () => {
                   className={`p-button-sm  p-button-success p-button-text ${styles.custom_small_icons}`}
                   onClick={() => {
                     console.log(rowData);
-                    showResponseModal();
+                    showResponseModal(rowData);
                   }}
                 />
               </>
@@ -290,9 +291,10 @@ const TemplateDetails: React.FC = () => {
     );
   };
 
-  const showResponseModal = () => {
+  const showResponseModal = (rowData: IAddQuestion) => {
     setUserDialog(true);
     setDialogTitle("Add Possible Response");
+    setEditObj(rowData);
   };
 
   const hideDialog = () => {
@@ -343,7 +345,11 @@ const TemplateDetails: React.FC = () => {
         modal
         onHide={hideDialog}
       >
-        <TemplateReponseModal />
+        <TemplateReponseModal
+          hideDialog={hideDialog}
+          editObj={editObj}
+          triggerDataReFetch={triggerDataReFetch}
+        />
       </Dialog>
     </>
   );

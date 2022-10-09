@@ -1,5 +1,9 @@
 import api from "../services/api";
-import { IAddQuestion, ITemplate } from "../types/TemplateTypes";
+import {
+  IAddQuestion,
+  IPossibleResponseModal,
+  ITemplate,
+} from "../types/TemplateTypes";
 
 const getAll = () => {
   return api.get<Array<ITemplate>>(
@@ -33,12 +37,23 @@ const deleteTemplateQuestion = (id: any, templateId: any) => {
   );
 };
 
+const createPossibleResponse = (
+  templateId: any,
+  body: IPossibleResponseModal
+) => {
+  return api.post(
+    `${process.env.REACT_APP_BASE_URL}/templates-question/${templateId}/possible-responses`,
+    body
+  );
+};
+
 const TemplateService = {
   getAll,
   createTemplate,
   templeDetails,
   createQuestion,
   deleteTemplateQuestion,
+  createPossibleResponse,
 };
 
 export default TemplateService;
