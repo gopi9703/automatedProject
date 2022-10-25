@@ -24,7 +24,9 @@ const TemplateDetails: React.FC = () => {
   const [fetchData, setFetchData] = useState<boolean>(true);
   const [userDialog, setUserDialog] = useState<boolean>(false);
   const [dialogTitle, setDialogTitle] = useState<string>("");
+  const [responseType, setResponseType] = useState<number>(1);
   const [editObj, setEditObj] = useState({});
+  const [editResObj, setEditResObj] = useState({});
 
   let params = useParams();
   let navigate = useNavigate();
@@ -98,6 +100,43 @@ const TemplateDetails: React.FC = () => {
     });
   };
 
+  const deleteResponseDialog = (row: IAddQuestion, editRes: any) => {
+    confirmDialog({
+      message: "Are you sure you want to proceed?",
+      header: "Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        console.log(row);
+        deletePossibleResponse(row, editRes);
+      },
+    });
+  };
+
+  const deletePossibleResponse = (row: any, editRes: any) => {
+    TemplateService.deletePossibleResponse(
+      row?.id,
+      editRes?.possibleResponse.id
+    ).then(
+      (response: any) => {
+        setLoading(false);
+        triggerDataReFetch();
+        setToaster({
+          severity: "info",
+          summary: "Niruthi Staff",
+          detail: `Response deleted successfully!`,
+        });
+      },
+      (e: Error) => {
+        setLoading(false);
+        setToaster({
+          severity: "error",
+          summary: "Error Message",
+          detail: "Some thing went wrong, please try again",
+        });
+      }
+    );
+  };
+
   const deleteQuestion = (row: IAddQuestion) => {
     setLoading(true);
     TemplateService.deleteTemplateQuestion(row?.id, params?.id).then(
@@ -121,19 +160,25 @@ const TemplateDetails: React.FC = () => {
     );
   };
 
-  const renderActions = (rowData: IAddQuestion) => {
+  const renderActions = (rowData: any) => {
     return (
       <>
-        <div className="d-flex align-items-center">
-          <Button
-            icon="pi pi-trash"
-            className="p-button-rounded p-button-danger p-button-outlined mx-3"
-            onClick={() => {
-              console.log(rowData);
-              deleteQuestionDialog(rowData);
-            }}
-          />
-        </div>
+        <Button
+          icon="pi pi-plus"
+          className="p-button-rounded p-button-success p-button-outlined w-full"
+          onClick={() => {
+            console.log(rowData);
+            showResponseModal(rowData);
+          }}
+        />
+        <div className="mx-2"></div>
+        <Button
+          icon="pi pi-trash"
+          className="p-button-rounded p-button-danger p-button-outlined w-full"
+          onClick={() => {
+            deleteQuestionDialog(rowData);
+          }}
+        />
       </>
     );
   };
@@ -201,69 +246,31 @@ const TemplateDetails: React.FC = () => {
   const renderResponses = (rowData: any) => {
     return (
       <>
-        <div className="flex flex-row items-center w-full justify-between">
+        <div className="flex flex-row items-center w-full justify-center">
           <div className="flex flex-col items-center">
             {rowData.possibleResponses && rowData.possibleResponses.length > 0
               ? rowData.possibleResponses.map((item: any, i: any) => (
-                  <div key={i}>
-                    <>
-                      {item.possibleResponse.description === "Yes" ? (
-                        <Button
-                          label={`${item.displayOrder} - ${item.possibleResponse.description}`}
-                          className="p-button-info p-button-outlined my-1"
-                          style={{ padding: "5px 15px", margin: "2px 0" }}
-                        />
-                      ) : (
-                        <Button
-                          label={`${item.displayOrder} - ${item.possibleResponse.description}`}
-                          className="p-button-danger p-button-outlined my-1 block"
-                          style={{ padding: "5px 15px", margin: "2px 0" }}
-                        />
-                      )}
-                    </>
-                  </div>
+                  <>
+                    <div
+                      key={i}
+                      className={`${styles.response_btn_view} flex flex-row items-center`}
+                    >
+                      <label>{`${item.displayOrder} - ${item.possibleResponse.text}`}</label>
+                      <i
+                        className="pi pi-pencil mx-2"
+                        onClick={() => {
+                          console.log(item);
+                          editResponseModal(rowData, item);
+                        }}
+                      ></i>
+                      <i
+                        className="pi pi-times"
+                        onClick={() => deleteResponseDialog(rowData, item)}
+                      ></i>
+                    </div>
+                  </>
                 ))
               : null}
-          </div>
-          <div className="flex flex-col responses_view">
-            {rowData.possibleResponses &&
-            rowData.possibleResponses.length > 0 ? (
-              <>
-                <Button
-                  icon="pi pi-plus"
-                  className={`p-button-sm  p-button-success p-button-text ${styles.custom_small_icons}`}
-                  onClick={() => {
-                    console.log(rowData);
-                    showResponseModal(rowData);
-                  }}
-                />
-                <Button
-                  icon="pi pi-user-edit"
-                  className={`p-button-sm p-button-secondary p-button-text mx-3 ${styles.custom_small_icons}`}
-                  onClick={() => {
-                    console.log(rowData);
-                  }}
-                />
-                <Button
-                  icon="pi pi-trash"
-                  className={`p-button-sm p-button-danger p-button-text mx-3 ${styles.custom_small_icons}`}
-                  onClick={() => {
-                    console.log(rowData);
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <Button
-                  icon="pi pi-plus"
-                  className={`p-button-sm  p-button-success p-button-text ${styles.custom_small_icons}`}
-                  onClick={() => {
-                    console.log(rowData);
-                    showResponseModal(rowData);
-                  }}
-                />
-              </>
-            )}
           </div>
         </div>
       </>
@@ -291,10 +298,20 @@ const TemplateDetails: React.FC = () => {
     );
   };
 
-  const showResponseModal = (rowData: IAddQuestion) => {
+  const showResponseModal = (row: IAddQuestion) => {
     setUserDialog(true);
     setDialogTitle("Add Possible Response");
-    setEditObj(rowData);
+    setEditObj(row);
+    setEditResObj({});
+    setResponseType(1);
+  };
+
+  const editResponseModal = (row: IAddQuestion, resObj: any) => {
+    setUserDialog(true);
+    setDialogTitle("Edit Possible Response");
+    setEditObj(row);
+    setEditResObj(resObj);
+    setResponseType(0);
   };
 
   const hideDialog = () => {
@@ -348,6 +365,8 @@ const TemplateDetails: React.FC = () => {
         <TemplateReponseModal
           hideDialog={hideDialog}
           editObj={editObj}
+          editResObj={editResObj}
+          responseType={responseType}
           triggerDataReFetch={triggerDataReFetch}
         />
       </Dialog>

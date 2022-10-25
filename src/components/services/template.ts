@@ -47,6 +47,23 @@ const createPossibleResponse = (
   );
 };
 
+const updatePossibleResponse = (
+  templateId: any,
+  id: any,
+  body: IPossibleResponseModal
+) => {
+  return api.put(
+    `${process.env.REACT_APP_BASE_URL}/templates-question/${templateId}/possible-responses/${id}`,
+    body
+  );
+};
+
+const deletePossibleResponse = (templateId: any, id: any) => {
+  return api.delete(
+    `${process.env.REACT_APP_BASE_URL}/templates-question/${templateId}/possible-responses/${id}`
+  );
+};
+
 const TemplateService = {
   getAll,
   createTemplate,
@@ -54,6 +71,8 @@ const TemplateService = {
   createQuestion,
   deleteTemplateQuestion,
   createPossibleResponse,
+  updatePossibleResponse,
+  deletePossibleResponse,
 };
 
 export default TemplateService;
