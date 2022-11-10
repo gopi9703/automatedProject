@@ -1,81 +1,91 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { FilterMatchMode } from "primereact/api";
 import { Dialog } from "primereact/dialog";
-import DivisionService from "../../../services/divisions";
-import IDivisionData from "../../../types/division";
-import DivisonForm from "./Form";
+import BillingCodeService from "../../../services/billing.service";
+import { IBilling } from "../../../types/AdministrationTypes";
+import BillingCodeForm from "./Form";
 
-const Division: React.FC = () => {
-  const [divisions, setDivisons] = useState([]);
+const BillingCode: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [fetchData, setFetchData] = useState<boolean>(true);
-  const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
-  const [filters, setFilters] = useState<any>();
+  const [billingData, setBillingData] = useState([]);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
   const [userDialog, setUserDialog] = useState<boolean>(false);
   const [dialogTitle, setDialogTitle] = useState<string>("");
+  const [fetchData, setFetchData] = useState<boolean>(true);
   const [editObj, setEditObj] = useState({});
   const [formType, setFormType] = useState<number>(0);
+  const [lazyParams, setLazyParams] = useState({
+    first: 1,
+    rows: 10,
+    page: 1,
+    sortField: null,
+    sortOrder: null,
+  });
 
   useEffect(() => {
+    loadLazyData();
+  }, [lazyParams, fetchData]);
+
+  const triggerDataReFetch = () => setFetchData((t) => !t);
+
+  const handlingParams = (data: any) => {
+    return Object.keys(data)
+      .map(
+        (key) =>
+          `${key}=${encodeURIComponent(
+            data[key] === undefined ? null : data[key]
+          )}`
+      )
+      .join("&");
+  };
+
+  const loadLazyData = () => {
     setLoading(true);
-    DivisionService.getAll()
+    BillingCodeService.getAll(
+      handlingParams({
+        PageNumber: lazyParams.page,
+        PageSize: lazyParams.rows,
+      })
+    )
       .then((response: any) => {
         setLoading(false);
-        setDivisons(response.data.reverse());
-        console.log(response.headers["x-pagination"]);
+        setBillingData(response.data);
+        const getHeaders = response.headers["x-pagination"];
+        const parsedHeaders = JSON.parse(getHeaders);
+        setTotalRecords(parsedHeaders.TotalCount);
       })
       .catch((e: Error) => {
         console.log(e);
       });
-    initFilters();
-  }, [fetchData]);
-
-  const triggerDataReFetch = () => setFetchData((t) => !t);
-
-  const onGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters["global"].value = value;
-
-    setFilters(_filters);
-    setGlobalFilterValue(value);
   };
 
-  const initFilters = () => {
-    setFilters({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    });
-    setGlobalFilterValue("");
+  const onPage = (event: any) => {
+    event["first"] = 0;
+    event["page"] = event.page + 1;
+    setLazyParams(event);
+  };
+
+  const onSort = (event: any) => {
+    setLazyParams(event);
+    console.log(event);
   };
 
   const renderFilter = () => {
     return (
-      <div className="flex flex-row justify-between">
-        <div>
-          <span className="p-input-icon-left mx-3">
-            <i className="pi pi-search" />
-            <InputText
-              placeholder="Keyword Search"
-              value={globalFilterValue}
-              onChange={onGlobalFilterChange}
-            />
-          </span>
-        </div>
+      <div className="flex flex-row flex-row-reverse justify-between">
         <Button
-          onClick={addNewUser}
           label="Add New"
           icon="pi pi-plus"
           className="p-button-success  p-button-outlined mr-2"
+          onClick={addNewUser}
         />
       </div>
     );
   };
 
-  const renderActions = (rowData: IDivisionData) => {
+  const renderActions = (rowData: IBilling) => {
     return (
       <>
         <div className="d-flex align-items-center">
@@ -89,15 +99,15 @@ const Division: React.FC = () => {
     );
   };
 
-  const editRowData = (row: IDivisionData) => {
+  const editRowData = (row: IBilling) => {
     setEditObj(row);
     setUserDialog(true);
-    setDialogTitle("Edit Divisions");
+    setDialogTitle("Edit Billing Code");
     setFormType(0);
   };
 
   const addNewUser = () => {
-    setDialogTitle("Add Divisions");
+    setDialogTitle("Add Billing Code");
     setUserDialog(true);
     setEditObj({});
     setFormType(1);
@@ -113,21 +123,24 @@ const Division: React.FC = () => {
         className="shadow-md"
         scrollable
         scrollHeight="400px"
-        value={divisions}
+        value={billingData}
         loading={loading}
         stripedRows
-        paginator
+        lazy={true}
+        paginator={true}
         filterDisplay="menu"
         responsiveLayout="scroll"
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-        rows={10}
         dataKey="id"
         rowsPerPageOptions={[10, 20, 50]}
-        globalFilterFields={["name", "contactName", "address"]}
-        emptyMessage="No Divisons found."
-        filters={filters}
+        emptyMessage="No Billing Codes found."
         header={renderFilter}
+        totalRecords={totalRecords}
+        rows={lazyParams.rows}
+        onPage={onPage}
+        onSort={onSort}
+        sortOrder={lazyParams.sortOrder}
       >
         <Column field="name" header="Name"></Column>
         <Column field="code" header="Code"></Column>
@@ -141,7 +154,7 @@ const Division: React.FC = () => {
         modal
         onHide={hideDialog}
       >
-        <DivisonForm
+        <BillingCodeForm
           triggerDataReFetch={triggerDataReFetch}
           hideDialog={hideDialog}
           editObj={editObj}
@@ -152,4 +165,4 @@ const Division: React.FC = () => {
   );
 };
 
-export default Division;
+export default BillingCode;

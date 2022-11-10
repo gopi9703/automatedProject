@@ -14,6 +14,7 @@ import PossibleResponse from "./components/pages/administration/Response";
 import Template from "./components/pages/template";
 import TemplateDetails from "./components/pages/template/templateDetails";
 import AddQuestion from "./components/pages/template/AddQuestion";
+import BillingCode from "./components/pages/administration/Billing";
 
 function AppRouting() {
   return (
@@ -36,6 +37,7 @@ function AppRouting() {
               <Route path="question-type" element={<QuestionType />} />
               <Route path="questions" element={<Questions />} />
               <Route path="possible-response" element={<PossibleResponse />} />
+              <Route path="billing-code" element={<BillingCode />} />
             </Route>
           </Route>
         </Routes>

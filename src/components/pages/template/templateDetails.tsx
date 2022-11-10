@@ -113,10 +113,7 @@ const TemplateDetails: React.FC = () => {
   };
 
   const deletePossibleResponse = (row: any, editRes: any) => {
-    TemplateService.deletePossibleResponse(
-      row?.id,
-      editRes?.possibleResponse.id
-    ).then(
+    TemplateService.deletePossibleResponse(row?.id, editRes?.id).then(
       (response: any) => {
         setLoading(false);
         triggerDataReFetch();
@@ -259,13 +256,16 @@ const TemplateDetails: React.FC = () => {
                       <i
                         className="pi pi-pencil mx-2"
                         onClick={() => {
-                          console.log(item);
+                          console.log("item", item);
                           editResponseModal(rowData, item);
                         }}
                       ></i>
                       <i
                         className="pi pi-times"
-                        onClick={() => deleteResponseDialog(rowData, item)}
+                        onClick={() => {
+                          console.log("item", item);
+                          deleteResponseDialog(rowData, item);
+                        }}
                       ></i>
                     </div>
                   </>

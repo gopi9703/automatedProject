@@ -19,6 +19,7 @@ const TemplateReponseModal = ({ ...props }) => {
   const [defaultResObj, setdefaultResObj] = useState<any[]>([]);
 
   useEffect(() => {
+    setFormLoader(true);
     console.log(editObj, editResObj);
     ResponseService.getAll()
       .then((response: any) => {
@@ -43,6 +44,7 @@ const TemplateReponseModal = ({ ...props }) => {
             }
           });
         }
+        setFormLoader(false);
       })
       .catch((e: Error) => {
         console.log(e);
@@ -83,6 +85,7 @@ const TemplateReponseModal = ({ ...props }) => {
           triggerDataReFetch();
         })
         .catch((e: Error) => {
+          setFormLoader(false);
           setToaster({
             severity: "error",
             summary: "Error Message",
@@ -90,14 +93,10 @@ const TemplateReponseModal = ({ ...props }) => {
           });
         });
     } else {
-      TemplateService.updatePossibleResponse(
-        editObj.id,
-        editResObj.possibleResponse.id,
-        {
-          possibleResponseId: data.possibleResponseId.value,
-          displayOrder: data.displayOrder,
-        }
-      )
+      TemplateService.updatePossibleResponse(editObj.id, editResObj.id, {
+        possibleResponseId: data.possibleResponseId.value,
+        displayOrder: data.displayOrder,
+      })
         .then((response: any) => {
           setToaster({
             severity: "success",

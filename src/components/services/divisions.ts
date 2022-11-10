@@ -12,7 +12,7 @@ const createDivison = (body: IDivisionData) => {
 };
 
 const updateDivison = (id: string, body: IDivisionData) => {
-  return api.put(`${process.env.REACT_APP_BASE_URL}/divisions?id=${id}`, body);
+  return api.put(`${process.env.REACT_APP_BASE_URL}/divisions/${id}`, body);
 };
 
 const DivisionService = {

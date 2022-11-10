@@ -110,6 +110,17 @@ const Sidebar: React.FunctionComponent = () => {
             Posssible Response
           </NavLink>
         </li>
+        <li className="my-1 block">
+          <NavLink
+            to="/administration/billing-code"
+            className={({ isActive }) =>
+              isActive ? styles.active : styles.nav_ui_link
+            }
+          >
+            <i className="pi pi-angle-double-right pr-2"></i>
+            Billing Code
+          </NavLink>
+        </li>
       </ul>
     </>
   );

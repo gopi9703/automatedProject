@@ -71,6 +71,13 @@ interface IProject {
   code: any;
 }
 
+interface IBilling {
+  id?: number | null;
+  name: string;
+  code: string;
+  description: string;
+}
+
 export type {
   IExternalRoles,
   IExternalSystemRoles,
@@ -81,4 +88,5 @@ export type {
   ICommonType,
   IPossibleResponse,
   IProject,
+  IBilling,
 };
